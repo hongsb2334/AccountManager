@@ -76,7 +76,10 @@ void Bank::CreateAccount()
 
 void Bank::Inquire() const
 {
+    //Load("accounts.txt");
+
 	std::cout << "========== 계좌 정보 ==========\n";
+
 
 	if (count == 0)
 	{
@@ -217,7 +220,7 @@ bool Bank::Save(const char* path) const
         return false;
     }
 
-    std::cout << count << "\n";
+    file << count << "\n";
     
     for (int i = 0; i < count; i++)
     {
@@ -239,13 +242,28 @@ bool Bank::Load(const char* path)
     }
 
     /* int id, const char* name, int balance, int donationTotal = 0 */
-    int id;
-    const char* name;
-    
-    int balance;
-    int donationtotal;
+    int type = 0, totalAccount = 0, id = 0, balance = 0, donationtotal = 0;
+    char name[50] = {};
 
-    file.get();
+    while (file)
+    {
+        file >> totalAccount >> type >> id >> name >> balance >> donationtotal;
+
+        switch (type)
+        {
+        case 1:
+            accounts[count++] = new Account(id, name, balance);
+            return true;
+        case 2:
+            accounts[count++] = new CreditAccount(id, name, balance);
+            return true;
+        case 3:
+            accounts[count++] = new DonationAccount(id, name, balance, donationtotal);
+            return true;
+        default:
+            return false;
+        }
+    }
 
     return false;
 }
@@ -269,14 +287,20 @@ void Bank::WithDraw()
 
 }
 
-void Bank::Test()
+void Bank::SaveTest()
 {
     accounts[count++] = new Account(102, "seongbum", 20000);
     accounts[count++] = new Account(200, "hyeongsin", 10000);
     accounts[count++] = new Account(300, "inzik", 100000);
-    Save("account.txt");
+    Save("accounts.txt");
 
 }
+
+void Bank::LoadTest()
+{
+    Load("accounts.txt");
+}
+
 
 Account* Bank::FindAccount(int targetId) const
 {

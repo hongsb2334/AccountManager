@@ -28,7 +28,10 @@ public:
     
 
     //저장 테스트 함수
-    void Test();
+    void SaveTest();
+
+    //로드 테스트 함수
+    void LoadTest();
 
 private:
 	//계좌 탐색

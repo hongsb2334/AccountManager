@@ -7,10 +7,17 @@
 
 int main()
 {
+
 	Bank bank;
+    if (bank.Load("accounts.txt"))
+    {
+        return 0;
+    }
+    bank.Run();
 
-    bank.Test();
 
+    //bank.SaveTest();
+   
     
 
 	//Account account(1000, "seongbum", 8000);
