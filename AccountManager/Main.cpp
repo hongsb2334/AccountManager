@@ -7,13 +7,14 @@
 
 int main()
 {
-
 	Bank bank;
-    if (bank.Load("accounts.txt"))
+    //bank.SaveTest();
+    if (!bank.Load("accounts.txt"))
     {
-        return 0;
+        std::cout << "은행에 계좌가 없거나 불러오기에 실패했습니다.\n";
     }
     bank.Run();
+    
 
 
     //bank.SaveTest();

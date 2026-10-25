@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <cstring>
 
 Bank::Bank() : count(0), accounts{}
 {
@@ -212,8 +213,6 @@ void Bank::Run()
 bool Bank::Save(const char* path) const
 {
     std::ofstream file(path);
-    
-    //file.open(path);
 
     if (!file.is_open())
     {
@@ -227,16 +226,14 @@ bool Bank::Save(const char* path) const
         accounts[i]->Save(file);
     }
 
-    //file.close();
-
+    return true;
 }
 
 bool Bank::Load(const char* path)
 {
     std::ifstream file(path);
-    file.open(path);
 
-    if (file.is_open())
+    if (!file.is_open())
     {
         return false;
     }
@@ -245,27 +242,40 @@ bool Bank::Load(const char* path)
     int type = 0, totalAccount = 0, id = 0, balance = 0, donationtotal = 0;
     char name[50] = {};
 
-    while (file)
-    {
-        file >> totalAccount >> type >> id >> name >> balance >> donationtotal;
+    file >> totalAccount;
 
-        switch (type)
-        {
-        case 1:
-            accounts[count++] = new Account(id, name, balance);
-            return true;
-        case 2:
-            accounts[count++] = new CreditAccount(id, name, balance);
-            return true;
-        case 3:
-            accounts[count++] = new DonationAccount(id, name, balance, donationtotal);
-            return true;
-        default:
-            return false;
-        }
+    //텍스트 파일에 계좌 수 100개 넘어가면 리턴
+    if (count + totalAccount > 100)
+    {
+        return false;
     }
 
-    return false;
+    for(int i = 0 ; i < totalAccount ; i++)
+    {
+        file >> type >> id >> std::setw(50) >> name >> balance >> donationtotal;
+
+        //파일 못읽거나 이름이 50자 넘어가면 반복문 종료
+        if (!file)
+        {
+            break;
+        }
+
+        if (type == 1)
+        {
+            accounts[count++] = new Account(id, name, balance);
+        }
+        else if (type == 2)
+        {
+            accounts[count++] = new CreditAccount(id, name, balance);
+        }
+        else if (type == 3)
+        {
+            accounts[count++] = new DonationAccount(id, name, balance, donationtotal);
+        }
+        else return false;
+    }
+
+    return true;
 }
 
 void Bank::WithDraw()
@@ -290,16 +300,13 @@ void Bank::WithDraw()
 void Bank::SaveTest()
 {
     accounts[count++] = new Account(102, "seongbum", 20000);
-    accounts[count++] = new Account(200, "hyeongsin", 10000);
-    accounts[count++] = new Account(300, "inzik", 100000);
+    accounts[count++] = new CreditAccount(200, "hyeongsin", 10000);
+    accounts[count++] = new DonationAccount(300, "inzik", 100000, 200);
     Save("accounts.txt");
 
 }
 
-void Bank::LoadTest()
-{
-    Load("accounts.txt");
-}
+
 
 
 Account* Bank::FindAccount(int targetId) const

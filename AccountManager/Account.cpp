@@ -108,7 +108,7 @@ void CreditAccount::Deposit(int amount)
 
 void CreditAccount::ShowInfo() const
 {
-    std::cout << "일반 계좌 - ";
+    std::cout << "신용 계좌 - ";
     ShowCommonInfo();
 }
 
